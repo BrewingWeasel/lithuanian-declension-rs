@@ -11,31 +11,35 @@ h1 {
   padding-bottom: 25px;
 }
 
-.Gen {
+.Genitive {
   color: #eb6f92; 
 }
 
-.Ins {
+.Instrumental {
   color: #f6c177;
 }
 
-.Acc {
+.Accusative {
   color: #31748f; 
 }
 
-.Loc {
+.Locative {
   color: #9ccfd8;
 }
 
-.Nom {
+.Nominative {
   color: #ebbcba;
 }
 
-.Dat {
+.Dative {
   color: #c4a7e7;
 }
 
-.Ill {
+.Vocative {
+  color: #c4a7e7;
+}
+
+.Illative {
   color: #31748f; 
 }
 

@@ -50,6 +50,7 @@ fn decline<'a>(word: String) -> (String, Vec<(&'a str, &'a str, &'a str)>) {
         ("Instrumental", "u", "ais"),
         ("Locative", "e", "uose"),
         ("Vocative", "ai", "ai"),
+        ("Illative", "an", "uosna"),
     ];
     let stem = word.strip_suffix("as").unwrap_or(&word).to_owned();
     let mut declension = Vec::new();
@@ -66,7 +67,7 @@ fn DeclinedWords(cx: Scope, info: ReadSignal<String>) -> impl IntoView {
         decl.iter()
             .map(|(declension, sing, plur)| {
                 view! { cx,
-                    <tr>
+                    <tr class={if *declension == "Illative" {"Muted"} else {"Normal"}} >
                         <td class={*declension}>{*declension}</td>
                         <td>{&stem}<div class={*declension} style="display: inline">{*sing}</div></td>
                         <td>{&stem}<div class={*declension} style="display: inline">{*plur}</div></td>

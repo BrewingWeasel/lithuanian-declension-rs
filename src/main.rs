@@ -1,7 +1,6 @@
 use leptos::{ev::SubmitEvent, html::Input, *};
 
 fn main() {
-    println!("Hello, world!");
     mount_to_body(|cx| view! { cx,  <App/> })
 }
 
@@ -24,14 +23,15 @@ fn TextInp(cx: Scope) -> impl IntoView {
         set_name(value);
     };
     view! { cx,
-        <form on:submit=on_submit>
+        <form on:submit=on_submit class="word_input">
             <input type="text"
                 value=name
+                class="search_input"
                 node_ref=input_element
             />
-            <input type="submit" value="Generate"/>
+            <input type="submit" class="button" value="Generate"/>
         </form>
-        <p>"Declension pattern for " {name}</p>
+        <h1>"Declension pattern for " {name}</h1>
         <DeclinedWords info=name />
     }
 }

@@ -1,0 +1,107 @@
+body {
+  background-color: #191724;
+  color: #e0def4;
+  font-family: Pier Sans,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji"
+}
+
+h1 {
+  height: 35px;
+  margin: auto;
+  text-align: center;
+  padding-bottom: 25px;
+}
+
+.Gen {
+  color: #eb6f92; 
+}
+
+.Ins {
+  color: #f6c177;
+}
+
+.Acc {
+  color: #31748f; 
+}
+
+.Loc {
+  color: #9ccfd8;
+}
+
+.Nom {
+  color: #ebbcba;
+}
+
+.Dat {
+  color: #c4a7e7;
+}
+
+.Ill {
+  color: #31748f; 
+}
+
+table {
+  border-collapse: collapse;
+  width: 50%;
+  background-color: #26233a;
+  padding: 50px;
+  margin: auto;
+}
+
+td, th {
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #1f1d2e;
+}
+
+td a {
+  display: block;
+  color: #f6c177;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+td a:hover {
+  color: #ebbcba;
+}
+
+.word_input {
+  display: block;
+  color: #f6c177;
+  text-align: center;
+  padding-bottom: 15px;
+}
+
+.search_input {
+  background-color: #26233a;
+  border-style: solid;
+  font-size: 20px;
+  resize: none;
+  overflow: scroll;
+  color: #e0def4;
+  padding: 0.4em;
+  margin-right: 0.7em;
+  border: solid;
+  border-radius: 1em;
+  border-color: #c4a7e7;
+}
+
+.button {
+  background-color: #1f1d2e;
+  border-style: solid;
+  font-size: 20px;
+  resize: none;
+  overflow: scroll;
+  color: #ebbcba;
+  padding: 0.4em;
+  border: solid;
+  border-radius: 1em;
+  border-color: #eb6f92;
+}
+
+.button:hover {
+  background-color: #403d52;
+}

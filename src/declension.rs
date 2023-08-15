@@ -1,6 +1,20 @@
 pub fn decline<'a>(word: String) -> (String, Vec<(&'a str, &'a str, &'a str)>) {
     let declension_patterns = [
         (
+            "ias",
+            "first declension",
+            [
+                ("Nominative", "ias", "iai"),
+                ("Genitive", "io", "ių"),
+                ("Dative", "iui", "iams"),
+                ("Accusative", "ią", "ius"),
+                ("Instrumental", "iu", "iais"),
+                ("Locative", "yje", "iuose"),
+                ("Vocative", "y", "iai"),
+                ("Illative", "ian", "iuosna"),
+            ],
+        ),
+        (
             "as",
             "first declension",
             [
@@ -25,7 +39,49 @@ pub fn decline<'a>(word: String) -> (String, Vec<(&'a str, &'a str, &'a str)>) {
                 ("Instrumental", "a", "omis"),
                 ("Locative", "oje", "ose"),
                 ("Vocative", "a", "os"),
-                ("Illative", "an", "uosna"),
+                ("Illative", "on", "osna"),
+            ],
+        ),
+        (
+            "ė",
+            "second declension",
+            [
+                ("Nominative", "ė", "ės"),
+                ("Genitive", "ės", "ių"),
+                ("Dative", "ei", "ėms"),
+                ("Accusative", "ę", "es"),
+                ("Instrumental", "e", "ėmis"),
+                ("Locative", "ėje", "ėse"),
+                ("Vocative", "e", "ės"),
+                ("Illative", "ėn", "ėsna"),
+            ],
+        ),
+        (
+            "ius",
+            "second declension",
+            [
+                ("Nominative", "ius", "iai"),
+                ("Genitive", "iaus", "ių"),
+                ("Dative", "iui", "iams"),
+                ("Accusative", "ių", "ius"),
+                ("Instrumental", "iumi", "iais"),
+                ("Locative", "iuje", "iuose"),
+                ("Vocative", "iau", "iai"),
+                ("Illative", "not implemented", "not implemented"),
+            ],
+        ),
+        (
+            "us",
+            "second declension",
+            [
+                ("Nominative", "us", "ūs"),
+                ("Genitive", "aus", "ų"),
+                ("Dative", "ui", "ums"),
+                ("Accusative", "ų", "us"),
+                ("Instrumental", "umi", "umis"),
+                ("Locative", "uje", "uose"),
+                ("Vocative", "au", "ūs"),
+                ("Illative", "not implemented", "not implemented"),
             ],
         ),
     ];

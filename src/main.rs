@@ -1,5 +1,7 @@
 use leptos::{ev::SubmitEvent, html::Input, *};
 
+mod declension;
+
 fn main() {
     mount_to_body(|cx| view! { cx,  <App/> })
 }
@@ -41,29 +43,10 @@ fn TextInp(cx: Scope) -> impl IntoView {
     }
 }
 
-fn decline<'a>(word: String) -> (String, Vec<(&'a str, &'a str, &'a str)>) {
-    let declension_patterns = [
-        ("Nominative", "as", "ai"),
-        ("Genitive", "o", "ų"),
-        ("Dative", "ui", "ams"),
-        ("Accusative", "ą", "us"),
-        ("Instrumental", "u", "ais"),
-        ("Locative", "e", "uose"),
-        ("Vocative", "ai", "ai"),
-        ("Illative", "an", "uosna"),
-    ];
-    let stem = word.strip_suffix("as").unwrap_or(&word).to_owned();
-    let mut declension = Vec::new();
-    for (cur_declension, ending_sing, ending_plur) in declension_patterns {
-        declension.push((cur_declension, ending_sing, ending_plur));
-    }
-    (stem, declension)
-}
-
 #[component]
 fn DeclinedWords(cx: Scope, info: ReadSignal<String>) -> impl IntoView {
     let counter_buttons = move || {
-        let (stem, decl) = decline(info());
+        let (stem, decl) = declension::decline(info());
         decl.iter()
             .map(|(declension, sing, plur)| {
                 view! { cx,

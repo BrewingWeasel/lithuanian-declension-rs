@@ -11,7 +11,7 @@ pub fn decline<'a>(word: String) -> (String, Vec<(&'a str, &'a str, &'a str)>) {
                 ("Instrumental", "iu", "iais"),
                 ("Locative", "yje", "iuose"),
                 ("Vocative", "y", "iai"),
-                ("Illative", "ian", "iuosna"),
+                ("Illative", "in", "iuosna"),
             ],
         ),
         (
@@ -58,7 +58,7 @@ pub fn decline<'a>(word: String) -> (String, Vec<(&'a str, &'a str, &'a str)>) {
         ),
         (
             "ius",
-            "second declension",
+            "fourth declension",
             [
                 ("Nominative", "ius", "iai"),
                 ("Genitive", "iaus", "ių"),
@@ -67,17 +67,31 @@ pub fn decline<'a>(word: String) -> (String, Vec<(&'a str, &'a str, &'a str)>) {
                 ("Instrumental", "iumi", "iais"),
                 ("Locative", "iuje", "iuose"),
                 ("Vocative", "iau", "iai"),
-                ("Illative", "not implemented", "not implemented"),
+                ("Illative", "iun", "?"),
             ],
         ),
         (
             "us",
-            "second declension",
+            "fourth declension",
             [
                 ("Nominative", "us", "ūs"),
                 ("Genitive", "aus", "ų"),
                 ("Dative", "ui", "ums"),
                 ("Accusative", "ų", "us"),
+                ("Instrumental", "umi", "umis"),
+                ("Locative", "uje", "uose"),
+                ("Vocative", "au", "ūs"),
+                ("Illative", "un", "?"),
+            ],
+        ),
+        (
+            "uo",
+            "fifth declension",
+            [
+                ("Nominative", "uo", "enys"),
+                ("Genitive", "ens", "enų"),
+                ("Dative", "eniui", "enums"),
+                ("Accusative", "enį", "enus"),
                 ("Instrumental", "umi", "umis"),
                 ("Locative", "uje", "uose"),
                 ("Vocative", "au", "ūs"),

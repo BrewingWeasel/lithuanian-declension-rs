@@ -1,4 +1,4 @@
-use leptos::{ev::SubmitEvent, html::Input, leptos_dom::console_log, *};
+use leptos::{ev::SubmitEvent, html::Input, *};
 use leptos_router::*;
 use rand::seq::SliceRandom;
 use rand::Rng;
@@ -103,6 +103,9 @@ static NUMBERS: [&str; 2] = ["Singular", "Plural"];
 
 #[component]
 fn GameView(cx: Scope) -> impl IntoView {
+    let (streak, set_streak) = create_signal(cx, 0);
+    let (answer, set_answer) = create_signal(cx, String::new());
+
     let (word, set_word) = create_signal(cx, "");
     let (number, set_number) = create_signal(cx, 0);
     let (case, set_case) = create_signal(cx, 0);
@@ -111,7 +114,7 @@ fn GameView(cx: Scope) -> impl IntoView {
     let create_word = move || {
         let word = POSSIBLE_WORDS.choose(&mut rand::thread_rng()).unwrap();
         set_word(word);
-        set_number(rand::thread_rng().gen_range(0..1));
+        set_number(rand::thread_rng().gen_range(0..=1));
         set_case(rand::thread_rng().gen_range(0..7));
     };
 
@@ -120,15 +123,20 @@ fn GameView(cx: Scope) -> impl IntoView {
 
         let value = input_element().expect("<input> to exist").value();
         let (stem, endings) = declension::decline(word().to_owned()).unwrap();
-        if value == stem + &endings[case()][number() + 1] {
-            console_log("nice!");
+        let real_word = stem + &endings[case()][number() + 1];
+        if value == real_word {
+            set_streak.update(|x| *x += 1);
+            set_answer(String::from("correct!"));
         } else {
-            console_log("bad!");
+            set_streak(0);
+            let response = format!("incorrect! Should be {}", real_word);
+            set_answer(response);
         }
         create_word();
     };
     create_word();
     view! { cx,
+        <h1>Current streak: {streak}</h1>
         <h2>Find the {move || NUMBERS[number()]}{" "}{move || CASES[case()]} of {word}</h2>
         <form on:submit=on_submit class="word_input">
             <input type="text"
@@ -136,5 +144,6 @@ fn GameView(cx: Scope) -> impl IntoView {
             />
             <input type="submit" class="button" value="Guess"/>
         </form>
+        <h1>{answer}</h1>
     }
 }

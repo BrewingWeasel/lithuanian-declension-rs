@@ -809,28 +809,72 @@ static IS_FIRST_DECL: [&str; 661] = [
     "žvyrkelis",
 ];
 
-// TODO: d -> dž
-
 static IS_THIRD_MASC: [&str; 1] = ["akis"];
 
 static IS_THIRD_FEM: [&str; 1] = ["vagis"];
 
-pub fn decline<'a>(word: String) -> Result<(String, [(&'a str, &'a str, &'a str); 8]), String> {
+pub fn decline<'a>(word: String) -> Result<(String, Vec<(&'a str, String, String)>), String> {
     for (ending, _declension_name, declensions) in DECLENSION_PATTERNS {
         if word.ends_with(ending) {
             let stem = word.strip_suffix(ending).unwrap_or(&word).to_owned();
-            return Ok((stem, declensions));
+            return Ok(parse_declensions(stem, declensions));
         }
     }
     if word.ends_with("is") {
         let stem = word.strip_suffix("is").unwrap_or(&word).to_owned();
         if IS_FIRST_DECL.contains(&word.as_str()) {
-            return Ok((stem, IS_1.2));
+            return Ok(parse_declensions(stem, IS_1.2));
         } else if IS_THIRD_MASC.contains(&word.as_str()) {
-            return Ok((stem, IS_3M.2));
+            return Ok(parse_declensions(stem, IS_3M.2));
         } else if IS_THIRD_FEM.contains(&word.as_str()) {
-            return Ok((stem, IS_3F.2));
+            return Ok(parse_declensions(stem, IS_3F.2));
         }
     }
     Err("does not exit".to_owned())
+}
+
+// TODO: clean up
+
+fn parse_declensions<'a>(
+    mut stem: String,
+    declension: [(&'a str, &'a str, &'a str); 8],
+) -> (String, Vec<(&'a str, String, String)>) {
+    if stem.ends_with("d") {
+        stem.pop();
+        (stem, handle_substitutions("d", "dž", declension))
+    } else if stem.ends_with("t") {
+        stem.pop();
+        (stem, handle_substitutions("t", "č", declension))
+    } else {
+        (
+            stem,
+            declension
+                .map(|(a, b, c)| (a, b.to_owned(), c.to_owned()))
+                .into(),
+        )
+    }
+}
+
+fn handle_substitutions<'a>(
+    original: &str,
+    new: &str,
+    declension: [(&'a str, &'a str, &'a str); 8],
+) -> Vec<(&'a str, String, String)> {
+    let mut values = Vec::new();
+
+    let palatize_endings = vec!["io", "iu", "ia", "ių"];
+
+    let create_ending = |orig: &str| {
+        for i in &palatize_endings {
+            if orig.starts_with(i) {
+                return format!("{new}{orig}");
+            }
+        }
+        return format!("{original}{orig}");
+    };
+
+    for (decl, sing, plur) in declension {
+        values.push((decl, create_ending(sing), create_ending(plur)))
+    }
+    values
 }

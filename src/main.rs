@@ -53,8 +53,8 @@ fn DeclinedWords(cx: Scope, info: ReadSignal<String>) -> impl IntoView {
                 view! { cx,
                     <tr class={if *declension == "Illative" {"Muted"} else {"Normal"}} >
                         <td class={*declension}>{*declension}</td>
-                        <td>{&stem}<div class={*declension} style="display: inline">{*sing}</div></td>
-                        <td>{&stem}<div class={*declension} style="display: inline">{*plur}</div></td>
+                        <td>{&stem}<div class={*declension} style="display: inline">{sing}</div></td>
+                        <td>{&stem}<div class={*declension} style="display: inline">{plur}</div></td>
                     </tr>
                 }
             })

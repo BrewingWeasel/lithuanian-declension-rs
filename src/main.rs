@@ -45,9 +45,10 @@ fn TextInp(cx: Scope) -> impl IntoView {
 
 #[component]
 fn DeclinedWords(cx: Scope, info: ReadSignal<String>) -> impl IntoView {
-    let counter_buttons = move || {
-        let (stem, decl) = declension::decline(info());
-        decl.iter()
+    let counter_buttons = move || match declension::decline(info()) {
+        Ok(val) => {
+            let (stem, decl) = val;
+            decl.iter()
             .map(|(declension, sing, plur)| {
                 view! { cx,
                     <tr class={if *declension == "Illative" {"Muted"} else {"Normal"}} >
@@ -58,6 +59,8 @@ fn DeclinedWords(cx: Scope, info: ReadSignal<String>) -> impl IntoView {
                 }
             })
             .collect_view(cx)
+        }
+        Err(_) => leptos::View::default(),
     };
 
     view! { cx,

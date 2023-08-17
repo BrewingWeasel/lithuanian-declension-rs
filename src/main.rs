@@ -1,4 +1,7 @@
-use leptos::{ev::SubmitEvent, html::Input, *};
+use leptos::{ev::SubmitEvent, html::Input, leptos_dom::console_log, *};
+use leptos_router::*;
+use rand::seq::SliceRandom;
+use rand::Rng;
 
 mod declension;
 
@@ -9,7 +12,16 @@ fn main() {
 #[component]
 fn App(cx: Scope) -> impl IntoView {
     view! { cx,
-        <TextInp/>
+        <Router>
+        <nav>
+        </nav>
+        <main>
+            <Routes>
+              <Route path="/" view=TextInp/>
+              <Route path="/streak" view=GameView/>
+            </Routes>
+        </main>
+        </Router>
     }
 }
 
@@ -49,12 +61,12 @@ fn DeclinedWords(cx: Scope, info: ReadSignal<String>) -> impl IntoView {
         Ok(val) => {
             let (stem, decl) = val;
             decl.iter()
-            .map(|(declension, sing, plur)| {
+            .map(|[declension, sing, plur]| {
                 view! { cx,
                     <tr class={if *declension == "Illative" {"Muted"} else {"Normal"}} >
-                        <td class={*declension}>{*declension}</td>
-                        <td>{&stem}<div class={*declension} style="display: inline">{sing}</div></td>
-                        <td>{&stem}<div class={*declension} style="display: inline">{plur}</div></td>
+                        <td class={declension}>{declension}</td>
+                        <td>{&stem}<div class={declension} style="display: inline">{sing}</div></td>
+                        <td>{&stem}<div class={declension} style="display: inline">{plur}</div></td>
                     </tr>
                 }
             })
@@ -72,5 +84,57 @@ fn DeclinedWords(cx: Scope, info: ReadSignal<String>) -> impl IntoView {
             </tr>
             {counter_buttons}
         </table>
+    }
+}
+
+static POSSIBLE_WORDS: [&str; 3] = ["žodis", "flamingas", "lūpas"];
+
+static CASES: [&str; 7] = [
+    "Nominative",
+    "Genitive",
+    "Dative",
+    "Accusative",
+    "Instrumental",
+    "Locative",
+    "Vocative",
+];
+
+static NUMBERS: [&str; 2] = ["Singular", "Plural"];
+
+#[component]
+fn GameView(cx: Scope) -> impl IntoView {
+    let (word, set_word) = create_signal(cx, "");
+    let (number, set_number) = create_signal(cx, 0);
+    let (case, set_case) = create_signal(cx, 0);
+    let input_element: NodeRef<Input> = create_node_ref(cx);
+
+    let create_word = move || {
+        let word = POSSIBLE_WORDS.choose(&mut rand::thread_rng()).unwrap();
+        set_word(word);
+        set_number(rand::thread_rng().gen_range(0..1));
+        set_case(rand::thread_rng().gen_range(0..7));
+    };
+
+    let on_submit = move |ev: SubmitEvent| {
+        ev.prevent_default();
+
+        let value = input_element().expect("<input> to exist").value();
+        let (stem, endings) = declension::decline(word().to_owned()).unwrap();
+        if value == stem + &endings[case()][number() + 1] {
+            console_log("nice!");
+        } else {
+            console_log("bad!");
+        }
+        create_word();
+    };
+    create_word();
+    view! { cx,
+        <h2>Find the {move || NUMBERS[number()]}{" "}{move || CASES[case()]} of {word}</h2>
+        <form on:submit=on_submit class="word_input">
+            <input type="text"
+                node_ref=input_element
+            />
+            <input type="submit" class="button" value="Guess"/>
+        </form>
     }
 }

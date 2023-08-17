@@ -1,146 +1,146 @@
-static DECLENSION_PATTERNS: [(&str, &str, [(&str, &str, &str); 8]); 7] = [
+static DECLENSION_PATTERNS: [(&str, &str, [[&str; 3]; 8]); 7] = [
     (
         "ias",
         "first declension",
         [
-            ("Nominative", "ias", "iai"),
-            ("Genitive", "io", "ių"),
-            ("Dative", "iui", "iams"),
-            ("Accusative", "ią", "ius"),
-            ("Instrumental", "iu", "iais"),
-            ("Locative", "yje", "iuose"),
-            ("Vocative", "y", "iai"),
-            ("Illative", "in", "iuosna"),
+            ["Nominative", "ias", "iai"],
+            ["Genitive", "io", "ių"],
+            ["Dative", "iui", "iams"],
+            ["Accusative", "ią", "ius"],
+            ["Instrumental", "iu", "iais"],
+            ["Locative", "yje", "iuose"],
+            ["Vocative", "y", "iai"],
+            ["Illative", "in", "iuosna"],
         ],
     ),
     (
         "as",
         "first declension",
         [
-            ("Nominative", "as", "ai"),
-            ("Genitive", "o", "ų"),
-            ("Dative", "ui", "ams"),
-            ("Accusative", "ą", "us"),
-            ("Instrumental", "u", "ais"),
-            ("Locative", "e", "uose"),
-            ("Vocative", "ai", "ai"),
-            ("Illative", "an", "uosna"),
+            ["Nominative", "as", "ai"],
+            ["Genitive", "o", "ų"],
+            ["Dative", "ui", "ams"],
+            ["Accusative", "ą", "us"],
+            ["Instrumental", "u", "ais"],
+            ["Locative", "e", "uose"],
+            ["Vocative", "ai", "ai"], // TODO: vocative for as changes
+            ["Illative", "an", "uosna"],
         ],
     ),
     (
         "a",
         "second declension",
         [
-            ("Nominative", "a", "os"),
-            ("Genitive", "os", "ų"),
-            ("Dative", "ai", "oms"),
-            ("Accusative", "ą", "as"),
-            ("Instrumental", "a", "omis"),
-            ("Locative", "oje", "ose"),
-            ("Vocative", "a", "os"),
-            ("Illative", "on", "osna"),
+            ["Nominative", "a", "os"],
+            ["Genitive", "os", "ų"],
+            ["Dative", "ai", "oms"],
+            ["Accusative", "ą", "as"],
+            ["Instrumental", "a", "omis"],
+            ["Locative", "oje", "ose"],
+            ["Vocative", "a", "os"],
+            ["Illative", "on", "osna"],
         ],
     ),
     (
         "ė",
         "second declension",
         [
-            ("Nominative", "ė", "ės"),
-            ("Genitive", "ės", "ių"),
-            ("Dative", "ei", "ėms"),
-            ("Accusative", "ę", "es"),
-            ("Instrumental", "e", "ėmis"),
-            ("Locative", "ėje", "ėse"),
-            ("Vocative", "e", "ės"),
-            ("Illative", "ėn", "ėsna"),
+            ["Nominative", "ė", "ės"],
+            ["Genitive", "ės", "ių"],
+            ["Dative", "ei", "ėms"],
+            ["Accusative", "ę", "es"],
+            ["Instrumental", "e", "ėmis"],
+            ["Locative", "ėje", "ėse"],
+            ["Vocative", "e", "ės"],
+            ["Illative", "ėn", "ėsna"],
         ],
     ),
     (
         "ius",
         "fourth declension",
         [
-            ("Nominative", "ius", "iai"),
-            ("Genitive", "iaus", "ių"),
-            ("Dative", "iui", "iams"),
-            ("Accusative", "ių", "ius"),
-            ("Instrumental", "iumi", "iais"),
-            ("Locative", "iuje", "iuose"),
-            ("Vocative", "iau", "iai"),
-            ("Illative", "iun", "?"),
+            ["Nominative", "ius", "iai"],
+            ["Genitive", "iaus", "ių"],
+            ["Dative", "iui", "iams"],
+            ["Accusative", "ių", "ius"],
+            ["Instrumental", "iumi", "iais"],
+            ["Locative", "iuje", "iuose"],
+            ["Vocative", "iau", "iai"],
+            ["Illative", "iun", "?"],
         ],
     ),
     (
         "us",
         "fourth declension",
         [
-            ("Nominative", "us", "ūs"),
-            ("Genitive", "aus", "ų"),
-            ("Dative", "ui", "ums"),
-            ("Accusative", "ų", "us"),
-            ("Instrumental", "umi", "umis"),
-            ("Locative", "uje", "uose"),
-            ("Vocative", "au", "ūs"),
-            ("Illative", "un", "?"),
+            ["Nominative", "us", "ūs"],
+            ["Genitive", "aus", "ų"],
+            ["Dative", "ui", "ums"],
+            ["Accusative", "ų", "us"],
+            ["Instrumental", "umi", "umis"],
+            ["Locative", "uje", "uose"],
+            ["Vocative", "au", "ūs"],
+            ["Illative", "un", "?"],
         ],
     ),
     (
         "uo",
         "fifth declension",
         [
-            ("Nominative", "uo", "enys"),
-            ("Genitive", "ens", "enų"),
-            ("Dative", "eniui", "enums"),
-            ("Accusative", "enį", "enus"),
-            ("Instrumental", "umi", "umis"),
-            ("Locative", "uje", "uose"),
-            ("Vocative", "au", "ūs"),
-            ("Illative", "not implemented", "not implemented"),
+            ["Nominative", "uo", "enys"],
+            ["Genitive", "ens", "enų"],
+            ["Dative", "eniui", "enums"],
+            ["Accusative", "enį", "enus"],
+            ["Instrumental", "umi", "umis"],
+            ["Locative", "uje", "uose"],
+            ["Vocative", "au", "ūs"],
+            ["Illative", "not implemented", "not implemented"],
         ],
     ),
 ];
 
-static IS_1: (&str, &str, [(&str, &str, &str); 8]) = (
+static IS_1: (&str, &str, [[&str; 3]; 8]) = (
     "is",
     "first declension",
     [
-        ("Nominative", "is", "iai"),
-        ("Genitive", "io", "ių"),
-        ("Dative", "iui", "iams"),
-        ("Accusative", "į", "ius"),
-        ("Instrumental", "iu", "iais"),
-        ("Locative", "yje", "iuose"),
-        ("Vocative", "i", "iai"),
-        ("Illative", "in", "not implemented"),
+        ["Nominative", "is", "iai"],
+        ["Genitive", "io", "ių"],
+        ["Dative", "iui", "iams"],
+        ["Accusative", "į", "ius"],
+        ["Instrumental", "iu", "iais"],
+        ["Locative", "yje", "iuose"],
+        ["Vocative", "i", "iai"],
+        ["Illative", "in", "not implemented"],
     ],
 );
 
-static IS_3M: (&str, &str, [(&str, &str, &str); 8]) = (
+static IS_3M: (&str, &str, [[&str; 3]; 8]) = (
     "is",
     "third declension",
     [
-        ("Nominative", "is", "ys"),
-        ("Genitive", "ies", "ių"), // TODO: not always ių
-        ("Dative", "iai", "ims"),
-        ("Accusative", "į", "is"),
-        ("Instrumental", "imi", "imis"),
-        ("Locative", "yje", "yse"),
-        ("Vocative", "ie", "ys"),
-        ("Illative", "in", "not implemented"),
+        ["Nominative", "is", "ys"],
+        ["Genitive", "ies", "ių"], // TODO: not always ių
+        ["Dative", "iai", "ims"],
+        ["Accusative", "į", "is"],
+        ["Instrumental", "imi", "imis"],
+        ["Locative", "yje", "yse"],
+        ["Vocative", "ie", "ys"],
+        ["Illative", "in", "not implemented"],
     ],
 );
 
-static IS_3F: (&str, &str, [(&str, &str, &str); 8]) = (
+static IS_3F: (&str, &str, [[&str; 3]; 8]) = (
     "is",
     "third declension",
     [
-        ("Nominative", "is", "ys"),
-        ("Genitive", "ies", "ių"), // TODO: not always ių
-        ("Dative", "iui", "ims"),
-        ("Accusative", "į", "is"),
-        ("Instrumental", "imi", "imis"),
-        ("Locative", "yje", "yse"),
-        ("Vocative", "ie", "ys"),
-        ("Illative", "in", "not implemented"),
+        ["Nominative", "is", "ys"],
+        ["Genitive", "ies", "ių"], // TODO: not always ių
+        ["Dative", "iui", "ims"],
+        ["Accusative", "į", "is"],
+        ["Instrumental", "imi", "imis"],
+        ["Locative", "yje", "yse"],
+        ["Vocative", "ie", "ys"],
+        ["Illative", "in", "not implemented"],
     ],
 );
 
@@ -813,7 +813,7 @@ static IS_THIRD_MASC: [&str; 1] = ["akis"];
 
 static IS_THIRD_FEM: [&str; 1] = ["vagis"];
 
-pub fn decline<'a>(word: String) -> Result<(String, Vec<(&'a str, String, String)>), String> {
+pub fn decline<'a>(word: String) -> Result<(String, Vec<[String; 3]>), String> {
     for (ending, _declension_name, declensions) in DECLENSION_PATTERNS {
         if word.ends_with(ending) {
             let stem = word.strip_suffix(ending).unwrap_or(&word).to_owned();
@@ -837,8 +837,8 @@ pub fn decline<'a>(word: String) -> Result<(String, Vec<(&'a str, String, String
 
 fn parse_declensions<'a>(
     mut stem: String,
-    declension: [(&'a str, &'a str, &'a str); 8],
-) -> (String, Vec<(&'a str, String, String)>) {
+    declension: [[&'a str; 3]; 8],
+) -> (String, Vec<[String; 3]>) {
     if stem.ends_with("d") {
         stem.pop();
         (stem, handle_substitutions("d", "dž", declension))
@@ -846,20 +846,15 @@ fn parse_declensions<'a>(
         stem.pop();
         (stem, handle_substitutions("t", "č", declension))
     } else {
-        (
-            stem,
-            declension
-                .map(|(a, b, c)| (a, b.to_owned(), c.to_owned()))
-                .into(),
-        )
+        (stem, declension.map(|a| a.map(|x| x.to_owned())).into())
     }
 }
 
 fn handle_substitutions<'a>(
     original: &str,
     new: &str,
-    declension: [(&'a str, &'a str, &'a str); 8],
-) -> Vec<(&'a str, String, String)> {
+    declension: [[&'a str; 3]; 8],
+) -> Vec<[String; 3]> {
     let mut values = Vec::new();
 
     let palatize_endings = vec!["io", "iu", "ia", "ių"];
@@ -873,8 +868,8 @@ fn handle_substitutions<'a>(
         return format!("{original}{orig}");
     };
 
-    for (decl, sing, plur) in declension {
-        values.push((decl, create_ending(sing), create_ending(plur)))
+    for [name, sing, plur] in declension {
+        values.push([name.to_owned(), create_ending(sing), create_ending(plur)])
     }
     values
 }

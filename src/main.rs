@@ -133,6 +133,7 @@ fn GameView(cx: Scope) -> impl IntoView {
             set_answer(response);
         }
         create_word();
+        input_element().unwrap().set_value("");
     };
     create_word();
     view! { cx,

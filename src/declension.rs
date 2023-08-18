@@ -1,3 +1,6 @@
+// vi: fdm=marker
+
+//{{{
 static DECLENSION_PATTERNS: [(&str, &str, [[&str; 3]; 8]); 7] = [
     (
         "ias",
@@ -98,7 +101,9 @@ static DECLENSION_PATTERNS: [(&str, &str, [[&str; 3]; 8]); 7] = [
         ],
     ),
 ];
+//}}}
 
+//{{{
 static IS_1: (&str, &str, [[&str; 3]; 8]) = (
     "is",
     "first declension",
@@ -143,7 +148,9 @@ static IS_3F: (&str, &str, [[&str; 3]; 8]) = (
         ["Illative", "in", "not implemented"],
     ],
 );
+//}}}
 
+//{{{
 // automatically generated; see https://github.com/BrewingWeasel/lithuanian_morph_data
 static IS_FIRST_DECL: [&str; 661] = [
     "aistruolis",
@@ -812,6 +819,7 @@ static IS_FIRST_DECL: [&str; 661] = [
 static IS_THIRD_MASC: [&str; 1] = ["akis"];
 
 static IS_THIRD_FEM: [&str; 1] = ["vagis"];
+//}}}
 
 pub fn decline<'a>(word: String) -> Result<(String, Vec<[String; 5]>), String> {
     for (ending, _declension_name, declensions) in DECLENSION_PATTERNS {

@@ -821,7 +821,7 @@ static IS_THIRD_MASC: [&str; 1] = ["akis"];
 static IS_THIRD_FEM: [&str; 1] = ["vagis"];
 //}}}
 
-pub fn decline<'a>(word: String) -> Result<(String, Vec<[String; 5]>), String> {
+pub fn decline(word: String) -> Result<(String, Vec<[String; 5]>), String> {
     for (ending, _declension_name, declensions) in DECLENSION_PATTERNS {
         if word.ends_with(ending) {
             let stem = word.strip_suffix(ending).unwrap_or(&word).to_owned();
@@ -843,21 +843,15 @@ pub fn decline<'a>(word: String) -> Result<(String, Vec<[String; 5]>), String> {
 
 // TODO: clean up all this stuff
 
-fn parse_declensions<'a>(
-    mut stem: String,
-    declension: [[&'a str; 3]; 8],
-) -> (String, Vec<[String; 5]>) {
-    if stem.ends_with("d") {
+fn parse_declensions(mut stem: String, declension: [[&str; 3]; 8]) -> (String, Vec<[String; 5]>) {
+    if stem.ends_with('d') {
         stem.pop();
         (stem, handle_substitutions("d", "dž", declension))
-    } else if stem.ends_with("t") {
+    } else if stem.ends_with('t') {
         stem.pop();
         (stem, handle_substitutions("t", "č", declension))
     } else {
-        (
-            stem,
-            declension.map(|a| create_nonexistent_prefixes(a)).into(),
-        )
+        (stem, declension.map(create_nonexistent_prefixes).into())
     }
 }
 
@@ -871,11 +865,7 @@ fn create_nonexistent_prefixes(declension: [&str; 3]) -> [String; 5] {
     ]
 }
 
-fn handle_substitutions<'a>(
-    original: &str,
-    new: &str,
-    declension: [[&'a str; 3]; 8],
-) -> Vec<[String; 5]> {
+fn handle_substitutions(original: &str, new: &str, declension: [[&str; 3]; 8]) -> Vec<[String; 5]> {
     let mut values = Vec::new();
 
     let palatize_endings = vec!["io", "iu", "ia", "ių"];
@@ -886,17 +876,17 @@ fn handle_substitutions<'a>(
                 return (new.to_owned(), orig.to_owned());
             }
         }
-        return (String::new(), format!("{original}{orig}"));
+        (String::new(), format!("{original}{orig}"))
     };
 
     for [name, sing, plur] in declension {
-        if sing.starts_with("en") {
+        if let Some(sing_prefixed) = sing.strip_prefix("en") && let Some(plur_prefixed) = plur.strip_prefix("en") {
             values.push([
                 name.to_owned(),
                 String::from("en"),
                 String::from("en"),
-                sing[2..].to_owned(),
-                plur[2..].to_owned(),
+                sing_prefixed.to_owned(),
+                plur_prefixed.to_owned(),
             ])
         } else {
             let (sing_prefix, sing) = create_ending(sing);

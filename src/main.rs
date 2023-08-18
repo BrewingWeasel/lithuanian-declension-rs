@@ -1,3 +1,4 @@
+#![feature(let_chains)]
 use leptos::{ev::SubmitEvent, html::Input, *};
 use leptos_router::*;
 

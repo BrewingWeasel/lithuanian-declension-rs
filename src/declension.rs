@@ -850,6 +850,8 @@ fn parse_declensions(mut stem: String, declension: [[&str; 3]; 8]) -> (String, V
     } else if stem.ends_with('t') {
         stem.pop();
         (stem, handle_substitutions("t", "č", declension))
+    } else if declension[0][2].starts_with("en") {
+        (stem, handle_substitutions("", "", declension))
     } else {
         (stem, declension.map(create_nonexistent_prefixes).into())
     }
@@ -883,8 +885,9 @@ fn handle_substitutions(original: &str, new: &str, declension: [[&str; 3]; 8]) -
         if let Some(sing_prefixed) = sing.strip_prefix("en") && let Some(plur_prefixed) = plur.strip_prefix("en") {
             values.push([
                 name.to_owned(),
-                String::from("en"),
-                String::from("en"),
+                // words like vanduo have d taken away and it needs to be added back
+                String::from(original) + "en", 
+                String::from(original) + "en",
                 sing_prefixed.to_owned(),
                 plur_prefixed.to_owned(),
             ])

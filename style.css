@@ -48,6 +48,10 @@ h1 {
   opacity: 60%;
 }
 
+.changed-stem {
+  color: #908caa;
+}
+
 table {
   border-collapse: collapse;
   width: 50%;
@@ -110,7 +114,7 @@ td a:hover {
   border-radius: 1em;
   border-color: #eb6f92;
 }
-
+ 
 .button:hover {
   background-color: #403d52;
 }

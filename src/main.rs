@@ -60,12 +60,12 @@ fn DeclinedWords(cx: Scope, info: ReadSignal<String>) -> impl IntoView {
         Ok(val) => {
             let (stem, decl) = val;
             decl.iter()
-            .map(|[declension, sing, plur]| {
+            .map(|[declension, sing_pref, plur_pref, sing, plur]| {
                 view! { cx,
                     <tr class={if *declension == "Illative" {"Muted"} else {"Normal"}} >
                         <td class={declension}>{declension}</td>
-                        <td>{&stem}<div class={declension} style="display: inline">{sing}</div></td>
-                        <td>{&stem}<div class={declension} style="display: inline">{plur}</div></td>
+                        <td>{&stem}<div class="changed-stem" style="display: inline">{sing_pref}</div><div class={declension} style="display: inline">{sing}</div></td>
+                        <td>{&stem}<div class="changed-stem" style="display: inline">{plur_pref}</div><div class={declension} style="display: inline">{plur}</div></td>
                     </tr>
                 }
             })

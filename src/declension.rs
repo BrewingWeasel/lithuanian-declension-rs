@@ -97,7 +97,7 @@ static DECLENSION_PATTERNS: [(&str, &str, [[&str; 3]; 8]); 7] = [
             ["Instrumental", "eniu", "enimis"],
             ["Locative", "enyje", "enyse"],
             ["Vocative", "enie", "enys"],
-            ["Illative", "not implemented", "not implemented"],
+            ["Illative", "?", "?"],
         ],
     ),
 ];
@@ -115,7 +115,7 @@ static IS_1: (&str, &str, [[&str; 3]; 8]) = (
         ["Instrumental", "iu", "iais"],
         ["Locative", "yje", "iuose"],
         ["Vocative", "i", "iai"],
-        ["Illative", "in", "not implemented"],
+        ["Illative", "in", "?"],
     ],
 );
 
@@ -130,7 +130,7 @@ static IS_3M: (&str, &str, [[&str; 3]; 8]) = (
         ["Instrumental", "imi", "imis"],
         ["Locative", "yje", "yse"],
         ["Vocative", "ie", "ys"],
-        ["Illative", "in", "not implemented"],
+        ["Illative", "in", "?"],
     ],
 );
 
@@ -145,7 +145,7 @@ static IS_3F: (&str, &str, [[&str; 3]; 8]) = (
         ["Instrumental", "imi", "imis"],
         ["Locative", "yje", "yse"],
         ["Vocative", "ie", "ys"],
-        ["Illative", "in", "not implemented"],
+        ["Illative", "in", "?"],
     ],
 );
 //}}}

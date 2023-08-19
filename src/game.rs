@@ -1,8 +1,10 @@
+// vi: fdm=marker
 use crate::declension;
 use leptos::{ev::SubmitEvent, html::Input, *};
 use rand::seq::SliceRandom;
 use rand::Rng;
 
+//{{{
 // Generated with awk `'$2 == "N" {print $1}' JCL_lemmas.txt | head -n 300 | sed -E 's/(.*)/"\1",/' > based on JCL wordlist`
 static POSSIBLE_WORDS: [&str; 300] = [
     "metai",
@@ -306,6 +308,7 @@ static POSSIBLE_WORDS: [&str; 300] = [
     "telefonas",
     "raštas",
 ];
+//}}}
 
 static CASES: [&str; 7] = [
     "Nominative",

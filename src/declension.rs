@@ -821,7 +821,7 @@ static IS_THIRD_MASC: [&str; 1] = ["akis"];
 static IS_THIRD_FEM: [&str; 1] = ["vagis"];
 //}}}
 
-pub fn decline(word: String) -> Result<(String, Vec<[String; 5]>), String> {
+pub fn decline(word: String) -> Result<(String, Vec<[String; 7]>), String> {
     for (ending, _declension_name, declensions) in DECLENSION_PATTERNS {
         if word.ends_with(ending) {
             let stem = word.strip_suffix(ending).unwrap_or(&word).to_owned();
@@ -843,7 +843,7 @@ pub fn decline(word: String) -> Result<(String, Vec<[String; 5]>), String> {
 
 // TODO: clean up all this stuff
 
-fn parse_declensions(mut stem: String, declension: [[&str; 3]; 8]) -> (String, Vec<[String; 5]>) {
+fn parse_declensions(mut stem: String, declension: [[&str; 3]; 8]) -> (String, Vec<[String; 7]>) {
     if stem.ends_with('d') {
         stem.pop();
         (stem, handle_substitutions("d", "dž", declension))
@@ -857,9 +857,11 @@ fn parse_declensions(mut stem: String, declension: [[&str; 3]; 8]) -> (String, V
     }
 }
 
-fn create_nonexistent_prefixes(declension: [&str; 3]) -> [String; 5] {
+fn create_nonexistent_prefixes(declension: [&str; 3]) -> [String; 7] {
     [
         declension[0].to_owned(),
+        String::new(),
+        String::new(),
         String::new(),
         String::new(),
         declension[1].to_owned(),
@@ -867,7 +869,7 @@ fn create_nonexistent_prefixes(declension: [&str; 3]) -> [String; 5] {
     ]
 }
 
-fn handle_substitutions(original: &str, new: &str, declension: [[&str; 3]; 8]) -> Vec<[String; 5]> {
+fn handle_substitutions(original: &str, new: &str, declension: [[&str; 3]; 8]) -> Vec<[String; 7]> {
     let mut values = Vec::new();
 
     let palatize_endings = vec!["io", "iu", "ia", "ių"];
@@ -875,10 +877,10 @@ fn handle_substitutions(original: &str, new: &str, declension: [[&str; 3]; 8]) -
     let create_ending = |orig: &str| {
         for i in &palatize_endings {
             if orig.starts_with(i) {
-                return (new.to_owned(), orig.to_owned());
+                return (String::new(), new.to_owned(), orig.to_owned());
             }
         }
-        (String::new(), format!("{original}{orig}"))
+        (original.to_owned(), String::new(), orig.to_owned())
     };
 
     for [name, sing, plur] in declension {
@@ -887,8 +889,10 @@ fn handle_substitutions(original: &str, new: &str, declension: [[&str; 3]; 8]) -
                 values.push([
                     name.to_owned(),
                     // words like vanduo have d taken away and it needs to be added back
-                    String::from(original) + "en",
-                    String::from(original) + "en",
+                    String::from(original),
+                    String::from(original),
+                    String::from("en"),
+                    String::from("en"),
                     sing_prefixed.to_owned(),
                     plur_prefixed.to_owned(),
                 ])
@@ -897,15 +901,25 @@ fn handle_substitutions(original: &str, new: &str, declension: [[&str; 3]; 8]) -
                     name.to_owned(),
                     // words like vanduo have d taken away and it needs to be added back
                     String::from(original),
-                    String::from(original) + "en",
+                    String::from(original),
+                    String::new(),
+                    String::from("en"),
                     sing.to_owned(),
                     plur_prefixed.to_owned(),
                 ])
             }
         } else {
-            let (sing_prefix, sing) = create_ending(sing);
-            let (plur_prefix, plur) = create_ending(plur);
-            values.push([name.to_owned(), sing_prefix, plur_prefix, sing, plur])
+            let (sing_orig, sing_prefix, sing) = create_ending(sing);
+            let (plur_orig, plur_prefix, plur) = create_ending(plur);
+            values.push([
+                name.to_owned(),
+                sing_orig,
+                plur_orig,
+                sing_prefix,
+                plur_prefix,
+                sing,
+                plur,
+            ])
         }
     }
     values

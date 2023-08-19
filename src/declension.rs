@@ -882,15 +882,26 @@ fn handle_substitutions(original: &str, new: &str, declension: [[&str; 3]; 8]) -
     };
 
     for [name, sing, plur] in declension {
-        if let Some(sing_prefixed) = sing.strip_prefix("en") && let Some(plur_prefixed) = plur.strip_prefix("en") {
-            values.push([
-                name.to_owned(),
-                // words like vanduo have d taken away and it needs to be added back
-                String::from(original) + "en", 
-                String::from(original) + "en",
-                sing_prefixed.to_owned(),
-                plur_prefixed.to_owned(),
-            ])
+        if let Some(plur_prefixed) = plur.strip_prefix("en") {
+            if let Some(sing_prefixed) = sing.strip_prefix("en") {
+                values.push([
+                    name.to_owned(),
+                    // words like vanduo have d taken away and it needs to be added back
+                    String::from(original) + "en",
+                    String::from(original) + "en",
+                    sing_prefixed.to_owned(),
+                    plur_prefixed.to_owned(),
+                ])
+            } else {
+                values.push([
+                    name.to_owned(),
+                    // words like vanduo have d taken away and it needs to be added back
+                    String::from(original),
+                    String::from(original) + "en",
+                    sing.to_owned(),
+                    plur_prefixed.to_owned(),
+                ])
+            }
         } else {
             let (sing_prefix, sing) = create_ending(sing);
             let (plur_prefix, plur) = create_ending(plur);

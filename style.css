@@ -133,3 +133,10 @@ td a:hover {
 .tables table {
   width: 35%;
 }
+
+.neuter-value {
+  background-color: #26233a;
+  height: 30px;
+  width: 80px;
+  text-align: center;
+}

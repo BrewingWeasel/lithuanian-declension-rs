@@ -106,6 +106,16 @@ fn DeclinedWords(cx: Scope, info: ReadSignal<String>) -> impl IntoView {
 
             // TODO: don't use extra clone
             view! { cx,
+                <table class="neuter-value">
+                    <tr>
+                        <th>Neuter</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            {info()[..info().len() - 1].to_string()}
+                        </td>
+                    </tr>
+                </table>
                 <div class="titles">
                     <h2>Masculine</h2>
                     <h2>Feminine</h2>

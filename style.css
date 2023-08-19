@@ -118,3 +118,18 @@ td a:hover {
 .button:hover {
   background-color: #403d52;
 }
+
+
+.titles {
+  display: flex;
+  justify-content: space-around;
+}
+
+.tables {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.tables table {
+  width: 35%;
+}

@@ -83,6 +83,7 @@ fn DeclinedWords(cx: Scope, info: ReadSignal<String>) -> impl IntoView {
             }
             .into_view(cx)
         }
+
         Ok(noundecl::Declension::Adjective(stem, decl)) => {
             let view = decl.iter()
                 .map(|(declension, [[mascsg, femsg], [mascpl, fempl]])|
@@ -103,8 +104,13 @@ fn DeclinedWords(cx: Scope, info: ReadSignal<String>) -> impl IntoView {
                     )
                 );
 
+            // TODO: don't use extra clone
             view! { cx,
-                <h1>Masculine</h1>
+                <div class="titles">
+                    <h2>Masculine</h2>
+                    <h2>Feminine</h2>
+                </div>
+                <div class="tables">
                 <table>
                     <tr>
                         <th>Declension</th>
@@ -113,7 +119,6 @@ fn DeclinedWords(cx: Scope, info: ReadSignal<String>) -> impl IntoView {
                     </tr>
                     {view.clone().map(|(m, _)| m).collect_view(cx)}
                 </table>
-                <h1>Feminine</h1>
                 <table>
                     <tr>
                         <th>Declension</th>
@@ -121,7 +126,7 @@ fn DeclinedWords(cx: Scope, info: ReadSignal<String>) -> impl IntoView {
                         <th>Plural</th>
                     </tr>
                     {view.map(|(_, f)| f).collect_view(cx)}
-                </table>
+                </table></div>
             }
             .into_view(cx)
         }

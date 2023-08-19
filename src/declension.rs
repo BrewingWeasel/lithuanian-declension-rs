@@ -1,5 +1,7 @@
 // vi: fdm=marker
 
+use crate::{create_ending, WordParts};
+
 //{{{
 static DECLENSION_PATTERNS: [(&str, &str, [[&str; 3]; 8]); 7] = [
     (
@@ -821,7 +823,9 @@ static IS_THIRD_MASC: [&str; 1] = ["akis"];
 static IS_THIRD_FEM: [&str; 1] = ["vagis"];
 //}}}
 
-pub fn decline(word: String) -> Result<(String, Vec<[String; 7]>), String> {
+pub fn decline_noun<'a>(
+    word: String,
+) -> Result<(String, Vec<(&'a str, [WordParts<'a>; 2])>), String> {
     for (ending, _declension_name, declensions) in DECLENSION_PATTERNS {
         if word.ends_with(ending) {
             let stem = word.strip_suffix(ending).unwrap_or(&word).to_owned();
@@ -841,9 +845,10 @@ pub fn decline(word: String) -> Result<(String, Vec<[String; 7]>), String> {
     Err("does not exit".to_owned())
 }
 
-// TODO: clean up all this stuff
-
-fn parse_declensions(mut stem: String, declension: [[&str; 3]; 8]) -> (String, Vec<[String; 7]>) {
+fn parse_declensions<'a>(
+    mut stem: String,
+    declension: [[&'a str; 3]; 8],
+) -> (String, Vec<(&'a str, [WordParts<'a>; 2])>) {
     if stem.ends_with('d') {
         stem.pop();
         (stem, handle_substitutions("d", "dž", declension))
@@ -857,69 +862,84 @@ fn parse_declensions(mut stem: String, declension: [[&str; 3]; 8]) -> (String, V
     }
 }
 
-fn create_nonexistent_prefixes(declension: [&str; 3]) -> [String; 7] {
-    [
-        declension[0].to_owned(),
-        String::new(),
-        String::new(),
-        String::new(),
-        String::new(),
-        declension[1].to_owned(),
-        declension[1].to_owned(),
-    ]
+fn create_nonexistent_prefixes<'a>(declension: [&'a str; 3]) -> (&'a str, [WordParts<'a>; 2]) {
+    (
+        declension[0],
+        [
+            WordParts {
+                unmodified_stem: "",
+                modified_stem: "",
+                ending: declension[1],
+            },
+            WordParts {
+                unmodified_stem: "",
+                modified_stem: "",
+                ending: declension[2],
+            },
+        ],
+    )
 }
 
-fn handle_substitutions(original: &str, new: &str, declension: [[&str; 3]; 8]) -> Vec<[String; 7]> {
+fn handle_substitutions<'a>(
+    original: &'a str,
+    new: &'a str,
+    declension: [[&'a str; 3]; 8],
+) -> Vec<(&'a str, [WordParts<'a>; 2])> {
     let mut values = Vec::new();
-
-    let palatize_endings = vec!["io", "iu", "ia", "ių"];
-
-    let create_ending = |orig: &str| {
-        for i in &palatize_endings {
-            if orig.starts_with(i) {
-                return (String::new(), new.to_owned(), orig.to_owned());
-            }
-        }
-        (original.to_owned(), String::new(), orig.to_owned())
-    };
 
     for [name, sing, plur] in declension {
         if let Some(plur_prefixed) = plur.strip_prefix("en") {
             if let Some(sing_prefixed) = sing.strip_prefix("en") {
-                values.push([
-                    name.to_owned(),
-                    // words like vanduo have d taken away and it needs to be added back
-                    String::from(original),
-                    String::from(original),
-                    String::from("en"),
-                    String::from("en"),
-                    sing_prefixed.to_owned(),
-                    plur_prefixed.to_owned(),
-                ])
+                values.push((
+                    name,
+                    [
+                        WordParts {
+                            unmodified_stem: original,
+                            modified_stem: "en",
+                            ending: sing_prefixed,
+                        },
+                        WordParts {
+                            unmodified_stem: original,
+                            modified_stem: "en",
+                            ending: plur_prefixed,
+                        },
+                    ],
+                ))
             } else {
-                values.push([
-                    name.to_owned(),
-                    // words like vanduo have d taken away and it needs to be added back
-                    String::from(original),
-                    String::from(original),
-                    String::new(),
-                    String::from("en"),
-                    sing.to_owned(),
-                    plur_prefixed.to_owned(),
-                ])
+                values.push((
+                    name,
+                    [
+                        WordParts {
+                            unmodified_stem: original,
+                            modified_stem: "",
+                            ending: sing,
+                        },
+                        WordParts {
+                            unmodified_stem: original,
+                            modified_stem: "en",
+                            ending: plur_prefixed,
+                        },
+                    ],
+                ))
             }
         } else {
-            let (sing_orig, sing_prefix, sing) = create_ending(sing);
-            let (plur_orig, plur_prefix, plur) = create_ending(plur);
-            values.push([
-                name.to_owned(),
-                sing_orig,
-                plur_orig,
-                sing_prefix,
-                plur_prefix,
-                sing,
-                plur,
-            ])
+            let (sing_orig, sing_prefix, sing) = create_ending(sing, original, new);
+            let (plur_orig, plur_prefix, plur) = create_ending(plur, original, new);
+            values.push((
+                name,
+                [
+                    WordParts {
+                        unmodified_stem: sing_orig,
+                        modified_stem: sing_prefix,
+                        ending: sing,
+                    },
+                    WordParts {
+                        unmodified_stem: plur_orig,
+                        modified_stem: plur_prefix,
+                        ending: plur,
+                    },
+                ],
+            ))
         }
     }
     values

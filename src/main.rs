@@ -1,8 +1,8 @@
 #![feature(let_chains)]
 use leptos::{ev::SubmitEvent, html::Input, *};
 use leptos_router::*;
+use noundecl::decline;
 
-mod declension;
 mod game;
 
 fn main() {
@@ -57,22 +57,36 @@ fn TextInp(cx: Scope) -> impl IntoView {
 
 #[component]
 fn DeclinedWords(cx: Scope, info: ReadSignal<String>) -> impl IntoView {
-    let counter_buttons = move || match declension::decline(info()) {
-        Ok(val) => {
-            let (stem, decl) = val;
-            decl.iter()
-            .map(|[declension, sing_orig, plur_orig, sing_pref, plur_pref, sing, plur]| {
-                view! { cx,
-                    <tr class={if *declension == "Illative" {"Muted"} else {"Normal"}} >
-                        <td class={declension}>{declension}</td>
-                        <td>{&stem}{sing_orig}<div class="changed-stem" style="display: inline">{sing_pref}</div><div class={declension} style="display: inline">{sing}</div></td>
-                        <td>{&stem}{plur_orig}<div class="changed-stem" style="display: inline">{plur_pref}</div><div class={declension} style="display: inline">{plur}</div></td>
-                    </tr>
-                }
-            })
-            .collect_view(cx)
+    let counter_buttons = move || {
+        match decline(info()) {
+            Ok(noundecl::Declension::Noun(stem, decl)) => {
+                decl.iter()
+                    .map(|(declension, [sing, plur])| {
+                        view! { cx,
+                            <tr class={if *declension == "Illative" {"Muted"} else {"Normal"}} >
+                                <td class={*declension}>{*declension}</td>
+                                <td>{&stem}{sing.unmodified_stem}<div class="changed-stem" style="display: inline">{sing.modified_stem}</div><div class={*declension} style="display: inline">{sing.ending}</div></td>
+                                <td>{&stem}{plur.unmodified_stem}<div class="changed-stem" style="display: inline">{plur.modified_stem}</div><div class={*declension} style="display: inline">{plur.ending}</div></td>
+                            </tr>
+                        }
+                    })
+                    .collect_view(cx)
+            }
+            Ok(noundecl::Declension::Adjective(stem, decl)) => {
+                decl.iter()
+                    .map(|(declension, [[mascsg, femsg], [mascpl, fempl]])| {
+                        view! { cx,
+                            <tr class={if *declension == "Illative" {"Muted"} else {"Normal"}} >
+                                <td class={*declension}>{*declension}</td>
+                                <td>{&stem}{mascsg.unmodified_stem}<div class="changed-stem" style="display: inline">{mascsg.modified_stem}</div><div class={*declension} style="display: inline">{mascsg.ending}</div></td>
+                                <td>{&stem}{mascpl.unmodified_stem}<div class="changed-stem" style="display: inline">{mascpl.modified_stem}</div><div class={*declension} style="display: inline">{mascpl.ending}</div></td>
+                            </tr>
+                        }
+                    })
+                    .collect_view(cx)
+            }
+            Err(_) => leptos::View::default(),
         }
-        Err(_) => leptos::View::default(),
     };
 
     view! { cx,

@@ -1,6 +1,6 @@
 // vi: fdm=marker
-use crate::declension;
 use leptos::{ev::SubmitEvent, html::Input, *};
+use noundecl::{decline, Declension};
 use rand::seq::SliceRandom;
 use rand::Rng;
 
@@ -343,11 +343,12 @@ pub fn GameView(cx: Scope) -> impl IntoView {
         ev.prevent_default();
 
         let value = input_element().expect("<input> to exist").value();
-        let (stem, endings) = declension::decline(word().to_owned()).unwrap();
-        let real_word = stem
-            + &endings[case()][number() + 1]
-            + &endings[case()][number() + 3]
-            + &endings[case()][number() + 5];
+        let real_word = if let Declension::Noun(stem, decl) = decline(word().to_owned()).unwrap() {
+            let current_vals = &decl[case()].1[number()];
+            stem + current_vals.unmodified_stem + current_vals.modified_stem + current_vals.ending
+        } else {
+            String::new()
+        };
         if value == real_word {
             set_streak.update(|x| *x += 1);
             set_answer(String::from("correct!"));

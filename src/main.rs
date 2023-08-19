@@ -57,10 +57,9 @@ fn TextInp(cx: Scope) -> impl IntoView {
 
 #[component]
 fn DeclinedWords(cx: Scope, info: ReadSignal<String>) -> impl IntoView {
-    let counter_buttons = move || {
-        match decline(info()) {
-            Ok(noundecl::Declension::Noun(stem, decl)) => {
-                decl.iter()
+    let declension = move || match decline(info()) {
+        Ok(noundecl::Declension::Noun(stem, decl)) => {
+            let declensions = decl.iter()
                     .map(|(declension, [sing, plur])| {
                         view! { cx,
                             <tr class={if *declension == "Illative" {"Muted"} else {"Normal"}} >
@@ -70,33 +69,63 @@ fn DeclinedWords(cx: Scope, info: ReadSignal<String>) -> impl IntoView {
                             </tr>
                         }
                     })
-                    .collect_view(cx)
-            }
-            Ok(noundecl::Declension::Adjective(stem, decl)) => {
-                decl.iter()
-                    .map(|(declension, [[mascsg, femsg], [mascpl, fempl]])| {
-                        view! { cx,
-                            <tr class={if *declension == "Illative" {"Muted"} else {"Normal"}} >
-                                <td class={*declension}>{*declension}</td>
-                                <td>{&stem}{mascsg.unmodified_stem}<div class="changed-stem" style="display: inline">{mascsg.modified_stem}</div><div class={*declension} style="display: inline">{mascsg.ending}</div></td>
-                                <td>{&stem}{mascpl.unmodified_stem}<div class="changed-stem" style="display: inline">{mascpl.modified_stem}</div><div class={*declension} style="display: inline">{mascpl.ending}</div></td>
-                            </tr>
-                        }
-                    })
-                    .collect_view(cx)
-            }
-            Err(_) => leptos::View::default(),
-        }
-    };
+                    .collect_view(cx);
 
-    view! { cx,
-        <table>
-            <tr>
-                <th>Declension</th>
-                <th>Singular</th>
-                <th>Plural</th>
-            </tr>
-            {counter_buttons}
-        </table>
-    }
+            view! { cx,
+                <table>
+                    <tr>
+                        <th>Declension</th>
+                        <th>Singular</th>
+                        <th>Plural</th>
+                    </tr>
+                    {declensions}
+                </table>
+            }
+            .into_view(cx)
+        }
+        Ok(noundecl::Declension::Adjective(stem, decl)) => {
+            let view = decl.iter()
+                .map(|(declension, [[mascsg, femsg], [mascpl, fempl]])|
+                    (view! { cx,
+                        <tr class={if *declension == "Illative" {"Muted"} else {"Normal"}} >
+                            <td class={*declension}>{*declension}</td>
+                            <td>{&stem}{mascsg.unmodified_stem}<div class="changed-stem" style="display: inline">{mascsg.modified_stem}</div><div class={*declension} style="display: inline">{mascsg.ending}</div></td>
+                            <td>{&stem}{mascpl.unmodified_stem}<div class="changed-stem" style="display: inline">{mascpl.modified_stem}</div><div class={*declension} style="display: inline">{mascpl.ending}</div></td>
+                        </tr>
+                    },
+                    view! { cx,
+                        <tr class={if *declension == "Illative" {"Muted"} else {"Normal"}} >
+                            <td class={*declension}>{*declension}</td>
+                            <td>{&stem}{femsg.unmodified_stem}<div class="changed-stem" style="display: inline">{femsg.modified_stem}</div><div class={*declension} style="display: inline">{femsg.ending}</div></td>
+                            <td>{&stem}{fempl.unmodified_stem}<div class="changed-stem" style="display: inline">{fempl.modified_stem}</div><div class={*declension} style="display: inline">{fempl.ending}</div></td>
+                        </tr>
+                    }
+                    )
+                );
+
+            view! { cx,
+                <h1>Masculine</h1>
+                <table>
+                    <tr>
+                        <th>Declension</th>
+                        <th>Singular</th>
+                        <th>Plural</th>
+                    </tr>
+                    {view.clone().map(|(m, _)| m).collect_view(cx)}
+                </table>
+                <h1>Feminine</h1>
+                <table>
+                    <tr>
+                        <th>Declension</th>
+                        <th>Singular</th>
+                        <th>Plural</th>
+                    </tr>
+                    {view.map(|(_, f)| f).collect_view(cx)}
+                </table>
+            }
+            .into_view(cx)
+        }
+        Err(_) => View::default(),
+    };
+    declension
 }

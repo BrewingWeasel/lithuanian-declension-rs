@@ -344,7 +344,10 @@ pub fn GameView(cx: Scope) -> impl IntoView {
 
         let value = input_element().expect("<input> to exist").value();
         let (stem, endings) = declension::decline(word().to_owned()).unwrap();
-        let real_word = stem + &endings[case()][number() + 1];
+        let real_word = stem
+            + &endings[case()][number() + 1]
+            + &endings[case()][number() + 3]
+            + &endings[case()][number() + 5];
         if value == real_word {
             set_streak.update(|x| *x += 1);
             set_answer(String::from("correct!"));

@@ -35,16 +35,9 @@ fn App(cx: Scope) -> impl IntoView {
 fn TextInp(cx: Scope) -> impl IntoView {
     let (word, set_word) = create_signal(cx, String::new());
     let input_element: NodeRef<Input> = create_node_ref(cx);
-    let on_submit = move |ev: SubmitEvent| {
-        // stop the page from reloading!
-        ev.prevent_default();
-
-        let value = input_element().expect("<input> to exist").value();
-        set_word(value);
-    };
 
     view! { cx,
-        <form action="decline/" class="word_input">
+        <form action="/decline/" class="word_input">
             <input type="text"
                 value=word
                 class="search_input"
@@ -71,6 +64,7 @@ fn DeclensionPage(cx: Scope) -> impl IntoView {
             .unwrap_or(String::new())
     });
     view! {cx,
+        <TextInp/>
         <div class="contents"
              style:display=if word.is_empty() { "none" } else { "block" }
             >

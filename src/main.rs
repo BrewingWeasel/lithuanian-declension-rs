@@ -9,6 +9,11 @@ fn main() {
     mount_to_body(|cx| view! { cx,  <App/> })
 }
 
+#[derive(Params, PartialEq)]
+struct WordSearch {
+    word: String,
+}
+
 #[component]
 fn App(cx: Scope) -> impl IntoView {
     view! { cx,
@@ -18,6 +23,7 @@ fn App(cx: Scope) -> impl IntoView {
         <main>
             <Routes>
               <Route path="/" view=TextInp/>
+              <Route path="/decline" view=DeclensionPage/>
               <Route path="/streak" view=game::GameView/>
             </Routes>
         </main>
@@ -38,10 +44,11 @@ fn TextInp(cx: Scope) -> impl IntoView {
     };
 
     view! { cx,
-        <form on:submit=on_submit class="word_input">
+        <form action="decline/" class="word_input">
             <input type="text"
                 value=word
                 class="search_input"
+                name="word"
                 node_ref=input_element
             />
             <input type="submit" class="button" value="Generate"/>
@@ -50,14 +57,32 @@ fn TextInp(cx: Scope) -> impl IntoView {
              style:display=move || if word().is_empty() { "none" } else { "block" }
             >
             <h1>"Declension pattern for " {word}</h1>
-            <DeclinedWords info=word />
+            // <DeclinedWords info=word />
         </div>
     }
 }
 
 #[component]
-fn DeclinedWords(cx: Scope, info: ReadSignal<String>) -> impl IntoView {
-    let declension = move || match decline(info()) {
+fn DeclensionPage(cx: Scope) -> impl IntoView {
+    let query = use_query::<WordSearch>(cx);
+    let word = query.with(|v| {
+        v.as_ref()
+            .map(|query| query.word.clone())
+            .unwrap_or(String::new())
+    });
+    view! {cx,
+        <div class="contents"
+             style:display=if word.is_empty() { "none" } else { "block" }
+            >
+            <h1>"Declension pattern for " {&word}</h1>
+            <DeclinedWords info=word.to_string()/>
+        </div>
+    }
+}
+
+#[component]
+fn DeclinedWords(cx: Scope, info: String) -> impl IntoView {
+    let declension = match decline(info.clone()) {
         Ok(noundecl::Declension::Noun(stem, decl)) => {
             let declensions = decl.iter()
                     .map(|(declension, [sing, plur])| {
@@ -112,7 +137,7 @@ fn DeclinedWords(cx: Scope, info: ReadSignal<String>) -> impl IntoView {
                     </tr>
                     <tr>
                         <td>
-                            {info()[..info().len() - 1].to_string()}
+                            {info[..info.len() - 1].to_string()}
                         </td>
                     </tr>
                 </table>

@@ -60,7 +60,7 @@ fn DeclensionPage(cx: Scope) -> impl IntoView {
     let word = query.with_untracked(|v| {
         v.as_ref()
             .map(|query| query.word.clone())
-            .unwrap_or(String::new())
+            .unwrap_or_default()
     });
     console_log(&word);
     view! {cx,

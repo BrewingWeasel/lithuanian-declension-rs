@@ -845,10 +845,10 @@ pub fn decline_noun<'a>(
     Err("does not exit".to_owned())
 }
 
-fn parse_declensions<'a>(
+fn parse_declensions(
     mut stem: String,
-    declension: [[&'a str; 3]; 8],
-) -> (String, Vec<(&'a str, [WordParts<'a>; 2])>) {
+    declension: [[&str; 3]; 8],
+) -> (String, Vec<(&str, [WordParts<'_>; 2])>) {
     if stem.ends_with('d') {
         stem.pop();
         (stem, handle_substitutions("d", "dž", declension))
@@ -862,7 +862,7 @@ fn parse_declensions<'a>(
     }
 }
 
-fn create_nonexistent_prefixes<'a>(declension: [&'a str; 3]) -> (&'a str, [WordParts<'a>; 2]) {
+fn create_nonexistent_prefixes(declension: [&str; 3]) -> (&str, [WordParts<'_>; 2]) {
     (
         declension[0],
         [

@@ -1,10 +1,11 @@
+#![feature(let_chains)]
 use declension::decline_noun;
 use declension_adjective::decline_adjective;
 
 mod declension;
 mod declension_adjective;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct WordParts<'a> {
     pub unmodified_stem: &'a str,
     pub modified_stem: &'a str,
@@ -13,6 +14,7 @@ pub struct WordParts<'a> {
 
 pub enum Declension<'a> {
     Noun(String, Vec<(&'a str, [WordParts<'a>; 2])>),
+    NounPlur(String, Vec<(&'a str, WordParts<'a>)>),
     Adjective(String, Vec<(&'a str, [[WordParts<'a>; 2]; 2])>),
 }
 
@@ -2231,8 +2233,7 @@ pub fn decline<'a>(word: String) -> Result<Declension<'a>, String> {
         let (stem, declension) = decline_adjective(word)?;
         Ok(Declension::Adjective(stem, declension))
     } else {
-        let (stem, declension) = decline_noun(word)?;
-        Ok(Declension::Noun(stem, declension))
+        decline_noun(word)
     }
 }
 

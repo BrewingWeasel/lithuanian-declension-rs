@@ -1,11 +1,12 @@
 // vi: fdm=marker
 
-use crate::{create_ending, WordParts};
+use crate::{create_ending, WordParts, Declension};
 
 //{{{
-static DECLENSION_PATTERNS: [(&str, &str, [[&str; 3]; 8]); 7] = [
+static DECLENSION_PATTERNS: [(&str, &str, &str, [[&str; 3]; 8]); 7] = [
     (
         "ias",
+        "iai",
         "first declension",
         [
             ["Nominative", "ias", "iai"],
@@ -20,6 +21,7 @@ static DECLENSION_PATTERNS: [(&str, &str, [[&str; 3]; 8]); 7] = [
     ),
     (
         "as",
+        "ai",
         "first declension",
         [
             ["Nominative", "as", "ai"],
@@ -34,6 +36,7 @@ static DECLENSION_PATTERNS: [(&str, &str, [[&str; 3]; 8]); 7] = [
     ),
     (
         "a",
+        "os",
         "second declension",
         [
             ["Nominative", "a", "os"],
@@ -48,6 +51,7 @@ static DECLENSION_PATTERNS: [(&str, &str, [[&str; 3]; 8]); 7] = [
     ),
     (
         "ė",
+        "ės",
         "second declension",
         [
             ["Nominative", "ė", "ės"],
@@ -62,6 +66,7 @@ static DECLENSION_PATTERNS: [(&str, &str, [[&str; 3]; 8]); 7] = [
     ),
     (
         "ius",
+        "iai",
         "fourth declension",
         [
             ["Nominative", "ius", "iai"],
@@ -76,6 +81,7 @@ static DECLENSION_PATTERNS: [(&str, &str, [[&str; 3]; 8]); 7] = [
     ),
     (
         "us",
+        "ūs",
         "fourth declension",
         [
             ["Nominative", "us", "ūs"],
@@ -90,6 +96,7 @@ static DECLENSION_PATTERNS: [(&str, &str, [[&str; 3]; 8]); 7] = [
     ),
     (
         "uo",
+        "enys",
         "fifth declension",
         [
             ["Nominative", "uo", "enys"],
@@ -825,30 +832,58 @@ static IS_THIRD_FEM: [&str; 1] = ["vagis"];
 
 pub fn decline_noun<'a>(
     word: String,
-) -> Result<(String, Vec<(&'a str, [WordParts<'a>; 2])>), String> {
-    for (ending, _declension_name, declensions) in DECLENSION_PATTERNS {
-        if word.ends_with(ending) {
-            let stem = word.strip_suffix(ending).unwrap_or(&word).to_owned();
-            return Ok(parse_declensions(stem, declensions));
+) -> Result<Declension<'a>, String> {
+    let (stem, declension) = get_noun_declension(word)?;
+    Ok(create_declension(stem, declension))
+}
+
+fn get_noun_declension<'a>(
+    word: String,
+) -> Result<(String, Vec<(&'a str, Vec<WordParts<'a>>)>), String> {
+    for (ending_sing, ending_plur, _declension_name, declensions) in DECLENSION_PATTERNS {
+        if word.ends_with(ending_sing) {
+            let stem = word.strip_suffix(ending_sing).unwrap_or(&word).to_owned();
+            return Ok(parse_declensions(stem, declensions.map(|v| v.to_vec())));
+        } else if word.ends_with(ending_plur) {
+            let stem = word.strip_suffix(ending_plur).unwrap_or(&word).to_owned();
+            let mut new_declensions = Vec::new();
+            for [name, _, plural] in declensions {
+                new_declensions.push(vec![name, plural])
+            }
+            let new_declensions: [Vec<&str>; 8] = new_declensions.try_into().unwrap();
+            return Ok(parse_declensions(stem, new_declensions));
         }
     }
+
     if word.ends_with("is") {
         let stem = word.strip_suffix("is").unwrap_or(&word).to_owned();
         if IS_FIRST_DECL.contains(&word.as_str()) {
-            return Ok(parse_declensions(stem, IS_1.2));
+            return Ok(parse_declensions(stem, IS_1.2.map(|x| x.to_vec())));
         } else if IS_THIRD_MASC.contains(&word.as_str()) {
-            return Ok(parse_declensions(stem, IS_3M.2));
+            return Ok(parse_declensions(stem, IS_3M.2.map(|x| x.to_vec())));
         } else if IS_THIRD_FEM.contains(&word.as_str()) {
-            return Ok(parse_declensions(stem, IS_3F.2));
+            return Ok(parse_declensions(stem, IS_3F.2.map(|x| x.to_vec())));
         }
     }
     Err("does not exit".to_owned())
 }
 
+fn create_declension<'a>(
+    stem: String,
+    declension: Vec<(&'a str, Vec<WordParts<'a>>)>
+) -> Declension<'a> {
+    if declension[0].1.len() == 2 {
+        Declension::Noun(stem, declension.into_iter().map(|x| (x.0, x.1.try_into().unwrap())).collect())
+    } else {
+        Declension::NounPlur(stem, declension.into_iter().map(|x| (x.0, x.1[0].clone())).collect())
+    }
+
+}
+
 fn parse_declensions(
     mut stem: String,
-    declension: [[&str; 3]; 8],
-) -> (String, Vec<(&str, [WordParts<'_>; 2])>) {
+    declension: [Vec<&str>; 8],
+) -> (String, Vec<(&str, Vec<WordParts<'_>>)>) {
     if stem.ends_with('d') {
         stem.pop();
         (stem, handle_substitutions("d", "dž", declension))
@@ -862,83 +897,99 @@ fn parse_declensions(
     }
 }
 
-fn create_nonexistent_prefixes(declension: [&str; 3]) -> (&str, [WordParts<'_>; 2]) {
-    (
-        declension[0],
-        [
-            WordParts {
+fn create_nonexistent_prefixes(declension: Vec<&str>) -> (&str, Vec<WordParts<'_>>) {
+    let singular = WordParts {
                 unmodified_stem: "",
                 modified_stem: "",
                 ending: declension[1],
-            },
-            WordParts {
-                unmodified_stem: "",
-                modified_stem: "",
-                ending: declension[2],
-            },
-        ],
-    )
+    };
+    if declension.len() == 3 {
+        return (
+            declension[0],
+            vec![
+                singular,
+                WordParts {
+                    unmodified_stem: "",
+                    modified_stem: "",
+                    ending: declension[2],
+                },
+            ],
+        )
+    } else {
+        return (
+            declension[0],
+            vec![singular],
+        )
+
+    }
 }
 
 fn handle_substitutions<'a>(
     original: &'a str,
     new: &'a str,
-    declension: [[&'a str; 3]; 8],
-) -> Vec<(&'a str, [WordParts<'a>; 2])> {
+    declension: [Vec<&'a str>; 8],
+) -> Vec<(&'a str, Vec<WordParts<'a>>)> {
     let mut values = Vec::new();
 
-    for [name, sing, plur] in declension {
-        if let Some(plur_prefixed) = plur.strip_prefix("en") {
-            if let Some(sing_prefixed) = sing.strip_prefix("en") {
-                values.push((
-                    name,
-                    [
-                        WordParts {
-                            unmodified_stem: original,
-                            modified_stem: "en",
-                            ending: sing_prefixed,
-                        },
-                        WordParts {
-                            unmodified_stem: original,
-                            modified_stem: "en",
-                            ending: plur_prefixed,
-                        },
-                    ],
-                ))
-            } else {
-                values.push((
-                    name,
-                    [
-                        WordParts {
-                            unmodified_stem: original,
-                            modified_stem: "",
-                            ending: sing,
-                        },
-                        WordParts {
-                            unmodified_stem: original,
-                            modified_stem: "en",
-                            ending: plur_prefixed,
-                        },
-                    ],
-                ))
-            }
+    for decl_values in declension {
+        let name = decl_values[0];
+        let sing = decl_values[1];
+        let maybe_plur = decl_values.get(2);
+        if let Some(plur) = maybe_plur && let Some(plur_prefixed) = plur.strip_prefix("en") {
+                if let Some(sing_prefixed) = sing.strip_prefix("en") {
+                    values.push((
+                        name,
+                        vec![
+                            WordParts {
+                                unmodified_stem: original,
+                                modified_stem: "en",
+                                ending: sing_prefixed,
+                            },
+                            WordParts {
+                                unmodified_stem: original,
+                                modified_stem: "en",
+                                ending: plur_prefixed,
+                            },
+                        ],
+                    ))
+                } else {
+                    values.push((
+                        name,
+                        vec![
+                            WordParts {
+                                unmodified_stem: original,
+                                modified_stem: "",
+                                ending: sing,
+                            },
+                            WordParts {
+                                unmodified_stem: original,
+                                modified_stem: "en",
+                                ending: plur_prefixed,
+                            },
+                        ],
+                    ))
+                }
         } else {
             let (sing_orig, sing_prefix, sing) = create_ending(sing, original, new);
-            let (plur_orig, plur_prefix, plur) = create_ending(plur, original, new);
-            values.push((
-                name,
-                [
+            let mut word_parts = vec![
                     WordParts {
                         unmodified_stem: sing_orig,
                         modified_stem: sing_prefix,
                         ending: sing,
-                    },
+                    }];
+            if let Some(plur) = maybe_plur {
+                let (plur_orig, plur_prefix, plur) = create_ending(plur, original, new); 
+                word_parts.push(
                     WordParts {
                         unmodified_stem: plur_orig,
                         modified_stem: plur_prefix,
                         ending: plur,
-                    },
-                ],
+                    });
+
+            }
+            values.push((
+                name,
+                word_parts,
             ))
         }
     }

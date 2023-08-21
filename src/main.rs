@@ -102,7 +102,29 @@ fn DeclinedWords(cx: Scope, info: String) -> impl IntoView {
             }
             .into_view(cx)
         }
+        Ok(noundecl::Declension::NounPlur(stem, decl)) => {
+            let declensions = decl.iter()
+                    .map(|(declension, plur)| {
+                        view! { cx,
+                            <tr class={if *declension == "Illative" {"Muted"} else {"Normal"}} >
+                                <td class={*declension}>{*declension}</td>
+                                <td>{&stem}{plur.unmodified_stem}<div class="changed-stem" style="display: inline">{plur.modified_stem}</div><div class={*declension} style="display: inline">{plur.ending}</div></td>
+                            </tr>
+                        }
+                    })
+                    .collect_view(cx);
 
+            view! { cx,
+                <table>
+                    <tr>
+                        <th>Declension</th>
+                        <th>Plural</th>
+                    </tr>
+                    {declensions}
+                </table>
+            }
+            .into_view(cx)
+        }
         Ok(noundecl::Declension::Adjective(stem, decl)) => {
             let view = decl.iter()
                 .map(|(declension, [[mascsg, femsg], [mascpl, fempl]])|

@@ -140,3 +140,7 @@ td a:hover {
   width: 80px;
   text-align: center;
 }
+
+.error {
+  color: #eb6f92;
+}

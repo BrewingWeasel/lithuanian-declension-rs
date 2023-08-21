@@ -865,7 +865,7 @@ fn get_noun_declension<'a>(
             return Ok(parse_declensions(stem, IS_3F.2.map(|x| x.to_vec())));
         }
     }
-    Err("does not exit".to_owned())
+    Err(format!("{word} cannot be declined"))
 }
 
 fn create_declension<'a>(

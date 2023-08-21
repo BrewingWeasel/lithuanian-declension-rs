@@ -181,7 +181,10 @@ fn DeclinedWords(cx: Scope, info: String) -> impl IntoView {
             }
             .into_view(cx)
         }
-        Err(_) => View::default(),
+        Err(e) => view! {cx,
+            <h1 class="error">Error! {e}</h1>
+        }
+        .into_view(cx),
     };
     declension
 }

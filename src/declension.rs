@@ -904,7 +904,7 @@ fn create_nonexistent_prefixes(declension: Vec<&str>) -> (&str, Vec<WordParts<'_
                 ending: declension[1],
     };
     if declension.len() == 3 {
-        return (
+        (
             declension[0],
             vec![
                 singular,
@@ -916,7 +916,7 @@ fn create_nonexistent_prefixes(declension: Vec<&str>) -> (&str, Vec<WordParts<'_
             ],
         )
     } else {
-        return (
+        (
             declension[0],
             vec![singular],
         )

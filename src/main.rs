@@ -1,5 +1,5 @@
 #![feature(let_chains)]
-use leptos::{ev::SubmitEvent, html::Input, *};
+use leptos::{html::Input, leptos_dom::console_log, *};
 use leptos_router::*;
 use noundecl::decline;
 
@@ -33,17 +33,16 @@ fn App(cx: Scope) -> impl IntoView {
 
 #[component]
 fn TextInp(cx: Scope) -> impl IntoView {
-    let (word, set_word) = create_signal(cx, String::new());
+    let (word, _set_word) = create_signal(cx, String::new());
     let input_element: NodeRef<Input> = create_node_ref(cx);
 
     view! { cx,
-        <form action="/decline/" class="word_input">
+        <form action="/decline/" class="word_input"  accept-charset="UTF-8">
             <input type="text"
                 value=word
                 class="search_input"
                 name="word"
-                node_ref=input_element
-            />
+                node_ref=input_element/>
             <input type="submit" class="button" value="Generate"/>
         </form>
         <div class="contents"
@@ -58,11 +57,12 @@ fn TextInp(cx: Scope) -> impl IntoView {
 #[component]
 fn DeclensionPage(cx: Scope) -> impl IntoView {
     let query = use_query::<WordSearch>(cx);
-    let word = query.with(|v| {
+    let word = query.with_untracked(|v| {
         v.as_ref()
             .map(|query| query.word.clone())
             .unwrap_or(String::new())
     });
+    console_log(&word);
     view! {cx,
         <TextInp/>
         <div class="contents"

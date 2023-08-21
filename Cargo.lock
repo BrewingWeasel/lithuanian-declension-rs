@@ -978,6 +978,7 @@ dependencies = [
 name = "noundecl"
 version = "0.1.0"
 dependencies = [
+ "idna",
  "leptos",
  "leptos_router",
  "rand",
